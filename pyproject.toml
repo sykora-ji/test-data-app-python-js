@@ -1,5 +1,12 @@
 [project]
-name = "hello-world-app"
+name = "sentiment-analysis-app"
 version = "0.1.0"
 requires-python = ">=3.11"
-dependencies = []
+dependencies = [
+    "fastapi>=0.115.0",
+    "uvicorn[standard]>=0.32.0",
+    "transformers>=4.46.0",
+    "torch>=2.5.0",
+    "scipy>=1.14.0",
+    "aiosqlite>=0.20.0",
+]
