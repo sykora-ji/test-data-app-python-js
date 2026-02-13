@@ -1,7 +1,4 @@
 #!/bin/bash
-set -euo pipefail
+set -Eeuo pipefail
 
-echo "Installing dependencies..."
-cd /app
-uv sync
-echo "Setup complete."
+echo "No dependencies to install for static page."
