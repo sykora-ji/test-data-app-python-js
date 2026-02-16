@@ -1,5 +1,6 @@
 [project]
-name = "hello-world-app"
-version = "0.1.0"
+name = "debug-data-app"
+version = "0.2.0"
+description = "Debug app for testing Keboola Data App Docker image"
 requires-python = ">=3.11"
 dependencies = []
