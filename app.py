@@ -1,7 +1,6 @@
 import json
 import os
 import platform
-import shutil
 import socket
 import sys
 from datetime import datetime, timezone
@@ -47,7 +46,7 @@ def get_directory_listing(path: str) -> list[dict]:
 
 def get_env_variables() -> dict[str, str]:
     """Return all environment variables, masking sensitive values."""
-    sensitive_keywords = {"token", "secret", "password", "key", "credential", "auth"}
+    sensitive_keywords = {"secret", "password", "key", "credential", "auth"}
     env = {}
     for k, v in sorted(os.environ.items()):
         if any(kw in k.lower() for kw in sensitive_keywords):
@@ -71,23 +70,6 @@ def get_system_info() -> dict:
         "cwd": os.getcwd(),
         "user": os.environ.get("USER", os.environ.get("LOGNAME", "unknown")),
     }
-
-
-def get_disk_usage() -> dict:
-    """Get disk usage for key paths."""
-    result = {}
-    for path in ["/", "/data", "/app", "/tmp"]:
-        try:
-            usage = shutil.disk_usage(path)
-            result[path] = {
-                "total_mb": round(usage.total / 1024 / 1024),
-                "used_mb": round(usage.used / 1024 / 1024),
-                "free_mb": round(usage.free / 1024 / 1024),
-                "used_percent": round(usage.used / usage.total * 100, 1),
-            }
-        except OSError:
-            result[path] = "not available"
-    return result
 
 
 def get_network_info() -> dict:
@@ -121,7 +103,6 @@ def build_debug_report() -> dict:
         "timestamp": datetime.now(tz=timezone.utc).isoformat(),
         "system": get_system_info(),
         "network": get_network_info(),
-        "disk_usage": get_disk_usage(),
         "data_directory": get_directory_listing(DATA_DIR),
         "data_config": get_data_config(),
         "environment_variables": get_env_variables(),
@@ -156,18 +137,6 @@ def render_html(report: dict) -> str:
 
     sys_info = report["system"]
     net_info = report["network"]
-    disk_rows = ""
-    for path, usage in report["disk_usage"].items():
-        if isinstance(usage, str):
-            disk_rows += f"<tr><td><code>{path}</code></td><td colspan='4'>{usage}</td></tr>\n"
-        else:
-            disk_rows += (
-                f"<tr><td><code>{path}</code></td>"
-                f"<td>{usage['total_mb']} MB</td>"
-                f"<td>{usage['used_mb']} MB</td>"
-                f"<td>{usage['free_mb']} MB</td>"
-                f"<td>{usage['used_percent']}%</td></tr>\n"
-            )
 
     config_section = ""
     if report["data_config"]:
@@ -231,12 +200,6 @@ def render_html(report: dict) -> str:
             </dl>
         </div>
     </div>
-
-    <h2>&#128190; Disk Usage</h2>
-    <table>
-        <tr><th>Path</th><th>Total</th><th>Used</th><th>Free</th><th>Used %</th></tr>
-        {disk_rows}
-    </table>
 
     <h2>&#128194; /data Directory</h2>
     <table>
