@@ -176,7 +176,7 @@ def render_html(report: dict) -> str:
 </head>
 <body>
     <h1>&#128270; Debug Info</h1>
-    <p class="timestamp">Generated: {report["timestamp"]}</p>
+    <p class="timestamp">generated: {report["timestamp"]}</p>
 
     <h2>&#128187; System</h2>
     <div class="info-grid">
